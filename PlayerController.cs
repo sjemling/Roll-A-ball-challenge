@@ -11,50 +11,72 @@ public class PlayerController : MonoBehaviour
     public Text scoreText;
     private Rigidbody rb;
     private int count;
-
+    private int score;
+    public Text looseText;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         count = 0;
-        SetCountText();
+        score = 0;
         winText.text = "";
 
-        if (Input.GetKey("escape"))
-        { Application.Quit(); }
     }
     void FixedUpdate()
     {
-      float moveHorizontal = Input.GetAxis("Horizontal");
-     float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
 
-    Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
-    rb.AddForce(movement * speed);
-        if (count >= 12)
+        rb.AddForce(movement * speed);
+
+        if (score >= 12)
         {
-         
-            transform.position = new Vector3(300, 100, 0);
-            speed = 10;
-        }
-    }
-    void SetCountText()
-    {
-        countText.text = "Count: " + count.ToString();
-        if (count >= 24)
-        {
-            winText.text = "You Win!";
-        }
-    }
+            speed = 50;
+            rb.AddForce(movement * speed);
+            rb.MovePosition(new Vector3(-100, 0, -100));
 
-    
+        }
+
+
+
+    }
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Pick Up")) ;
+        if (other.gameObject.CompareTag("Pickup"))
         {
             other.gameObject.SetActive(false);
             count = count + 1;
+            score = score + 1;
             SetCountText();
-            
+            SetScoreText();
         }
+        if (other.gameObject.CompareTag("Bad Pick ups"))
+        {
+            other.gameObject.SetActive(false);
+            score = score - 1;
+            SetScoreText();
+            SetCountText();
+        }
+
+        }
+
+     void SetCountText()
+        {
+            countText.text = "Count: " + count.ToString();
+            if (score >= 21)
+            {
+                winText.text = "You Win!";
+            }
+        }
+        
+        void SetScoreText()
+        {
+            scoreText.text = "Score: " + score;
+        if (score<=0 )
+        {
+            looseText.text = "you loose :("; 
+
         }
     }
+     }
